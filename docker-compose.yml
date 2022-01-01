@@ -4,7 +4,7 @@ services:
   traefik:
     command:
       # when debugging is needed
-      - --accesslog=false
+      - --accesslog=${TRAEFIK_ACCESSLOG}
       # enable Træfik dashboard
       - --api.dashboard=true
       # configure Let's Encrypt automatic certificates
@@ -41,23 +41,23 @@ services:
       - traefik.http.middlewares.http-to-https.redirectscheme.scheme=https
       - traefik.http.middlewares.http-to-https.redirectscheme.permanent=true
       ### Section HTTP
-      - traefik.http.routers.http-traefik_bjphoster_com.entrypoints=http
+      - traefik.http.routers.http-${TRAEFIK_ROUTER_NAME}.entrypoints=http
       # only some people can access the dashboard, hence protect it with it's whitelist
-      - traefik.http.routers.http-traefik_bjphoster_com.middlewares=dashboard-whitelist
+      - traefik.http.routers.http-${TRAEFIK_ROUTER_NAME}.middlewares=dashboard-whitelist
       # redirect Træfik dashboard to HTTPS only
-      - traefik.http.routers.http-traefik_bjphoster_com.middlewares=http-to-https
-      - traefik.http.routers.http-traefik_bjphoster_com.rule=Host(`traefik.bjphoster.com`)
-      - traefik.http.routers.http-traefik_bjphoster_com.service=api@internal
+      - traefik.http.routers.http-${TRAEFIK_ROUTER_NAME}.middlewares=http-to-https
+      - traefik.http.routers.http-${TRAEFIK_ROUTER_NAME}.rule=Host(`${TRAEFIK_MATCHRULE}`)
+      - traefik.http.routers.http-${TRAEFIK_ROUTER_NAME}.service=api@internal
       ### Section HTTPS
-      - traefik.http.routers.https-traefik_bjphoster_com.entrypoints=https
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.entrypoints=https
       # only some people can access the dashboard, hence protect it with it's whitelist
-      - traefik.http.routers.https-traefik_bjphoster_com.middlewares=dashboard-whitelist
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.middlewares=dashboard-whitelist
       # configure Træfik dashboard to be the exposed service
-      - traefik.http.routers.https-traefik_bjphoster_com.rule=Host(`traefik.bjphoster.com`)
-      - traefik.http.routers.https-traefik_bjphoster_com.service=api@internal
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.rule=Host(`${TRAEFIK_MATCHRULE}`)
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.service=api@internal
       # of course, enable TLS and it's certificate provider
-      - traefik.http.routers.https-traefik_bjphoster_com.tls=true
-      - traefik.http.routers.https-traefik_bjphoster_com.tls.certresolver=letsencrypt
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.tls=true
+      - traefik.http.routers.https-${TRAEFIK_ROUTER_NAME}.tls.certresolver=letsencrypt
     networks:
       - traefik-proxy
     ports:
